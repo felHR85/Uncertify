@@ -3,6 +3,7 @@ import shutil
 import click
 
 import manifest
+import okhttp
 
 temp_folder = "./__temp_folder__"
 
@@ -27,11 +28,12 @@ def main(apk: str):
     if has_xml_dir and has_xml_file:
         os.remove(temp_folder + '/res/xml/network_security_config.xml')
         shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
-    elif has_xml_dir not has_xml_file:
+    elif has_xml_dir is not has_xml_file:
         shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
     elif not has_xml_dir:
         os.mkdir(temp_folder + '/res/xml')
         shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    
     
 
 
