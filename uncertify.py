@@ -1,11 +1,8 @@
 import os
+import shutil
 import click
 
 import manifest
-
-#@click.command()
-#@click.option('--apk', default=1, help='Path of the Apk')
-#@click.pass_context
 
 temp_folder = "./__temp_folder__"
 
@@ -21,7 +18,21 @@ def main(apk: str):
     manifest_path = temp_folder + "/AndroidManifest.xml"
     manifest.modify_app_manifest(manifest_path)
 
-    #TODO: Edit AndroidManifestl.xml
+    os.remove(temp_folder + '/AndroidManifest.xml')
+    shutil.copyfile('AndroidManifest.xml', temp_folder + '/AndroidManifest.xml')
+
+    has_xml_dir = os.path.isdir(temp_folder + '/res/xml')
+    has_xml_file = os.path.isfile(temp_folder + '/res/xml/network_security_config.xml')
+
+    if has_xml_dir and has_xml_file:
+        os.remove(temp_folder + '/res/xml/network_security_config.xml')
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    elif has_xml_dir not has_xml_file:
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    elif not has_xml_dir:
+        os.mkdir(temp_folder + '/res/xml')
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    
 
 
 
