@@ -9,7 +9,7 @@ begin_method = ".method public certificatePinner(Lokhttp3/CertificatePinner;)Lok
 end_method = ".end method"
 
 # injects
-line_1 = ".locals2"
+line_1 = ".locals 2"
 line_2 = ".param p1, \"certificatePinner\""
 line_3 = "return-object p0"
 
