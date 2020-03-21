@@ -29,7 +29,12 @@ def main(apk: str):
     print('uncertify: network_security_config.xml added. Bypassing certificate pinning')
 
     #Modify Okhttp file
-    okhttp.modify_okhttp(temp_folder)
+    result = okhttp.modify_okhttp(temp_folder)
+    
+    if result is True:
+        print("uncertify: OkHttp certificate pinning bypassed")
+    else:
+        print("uncertify: No OkHttp library found")
 
 if __name__ == '__main__':
     main()

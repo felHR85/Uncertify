@@ -40,6 +40,9 @@ def _edit_okhttp_file(okhttp_file):
             line_end = i
             break
         i = i +1
+
+    if line_begin is 0:
+        return False
     
     file_lines[line_begin + 1] = line_1
     file_lines[line_begin + 2] = line_2
@@ -50,4 +53,5 @@ def _edit_okhttp_file(okhttp_file):
 
     with open(okhttp_file, 'w') as okhttp_file:
         for item in file_lines:
-            okhttp_file.write(item)    
+            okhttp_file.write(item)
+    return True    
