@@ -12,7 +12,7 @@ temp_folder = "./__temp_folder__"
 @click.argument("apk")
 def main(apk: str):
     print('uncertify: decompiling ' + apk.split('.')[0])
-    cmd = 'apktool d ' + apk + '-o ' + temp_folder + " --force > /dev/null"
+    cmd = 'apktool d ' + apk + ' -o ' + temp_folder + " --force > /dev/null"
     os.system(cmd)
     
     print('uncertify: Apk decompiled. Updating Android Manifest')
@@ -22,23 +22,14 @@ def main(apk: str):
     os.remove(temp_folder + '/AndroidManifest.xml')
     shutil.copyfile('AndroidManifest.xml', temp_folder + '/AndroidManifest.xml')
 
-    has_xml_dir = os.path.isdir(temp_folder + '/res/xml')
-    has_xml_file = os.path.isfile(temp_folder + '/res/xml/network_security_config.xml')
+    print('uncertify: Manifest updated. Adding network_security_config.xml')
 
-    if has_xml_dir and has_xml_file:
-        os.remove(temp_folder + '/res/xml/network_security_config.xml')
-        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
-    elif has_xml_dir is not has_xml_file:
-        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
-    elif not has_xml_dir:
-        os.mkdir(temp_folder + '/res/xml')
-        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    manifest.copy_security_file(temp_folder)
     
-    #Modify Okhttp files
+    print('uncertify: network_security_config.xml added. Bypassing certificate pinning')
 
-
-
-
+    #Modify Okhttp file
+    okhttp.modify_okhttp(temp_folder)
 
 if __name__ == '__main__':
     main()

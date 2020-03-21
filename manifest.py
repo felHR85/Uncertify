@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 
@@ -27,3 +29,16 @@ def modify_app_manifest(manifest_path: str):
     f = open('AndroidManifest.xml','w')
     f.write(str(xmlstr))
     f.close()
+
+def copy_security_file(temp_folder):
+    has_xml_dir = os.path.isdir(temp_folder + '/res/xml')
+    has_xml_file = os.path.isfile(temp_folder + '/res/xml/network_security_config.xml')
+
+    if has_xml_dir and has_xml_file:
+        os.remove(temp_folder + '/res/xml/network_security_config.xml')
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    elif has_xml_dir is not has_xml_file:
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
+    elif not has_xml_dir:
+        os.mkdir(temp_folder + '/res/xml')
+        shutil.copyfile('./xml/network_security_config.xml', temp_folder + '/res/xml/network_security_config.xml')
