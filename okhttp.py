@@ -14,18 +14,23 @@ line_2 = "\t.param p1, \"certificatePinner\"\n"
 line_3 = "\treturn-object p0\n"
 
 def modify_okhttp(app_folder):
-    f = _get_okhttp_file(app_folder)
-    if f == '':
+    files = _get_okhttp_file(app_folder)
+    if len(files) == 0:
         return False
-    _edit_okhttp_file(f)
+    
+    for f in files:
+        _edit_okhttp_file(f)
+
     return True
 
     
 def _get_okhttp_file(app_folder):
+    detected_files = []
     for root, dirs, files in os.walk(app_folder):
         if okhttp_file_name in files:
-            return os.path.join(root, okhttp_file_name)
-    return ''
+            path = os.path.join(root, okhttp_file_name)
+            detected_files.append(path)
+    return detected_files
 
 def _edit_okhttp_file(okhttp_file):
     i = 0
