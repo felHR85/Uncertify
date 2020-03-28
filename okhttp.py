@@ -1,25 +1,18 @@
 import os
 import fnmatch
 
+import okhttp_methods as methods
+
 # constants
 okhttp_file_name = 'OkHttpClient$Builder.smali'
 
-# constants
-begin_method = ".method public certificatePinner(Lokhttp3/CertificatePinner;)Lokhttp3/OkHttpClient$Builder"
-end_method = ".end method"
-
-# injects
-line_1 = "\t.locals 2\n"
-line_2 = "\t.param p1, \"certificatePinner\"\n"
-line_3 = "\treturn-object p0\n"
-
-def modify_okhttp(app_folder):
+def modify_okhttp(app_folder, method):
     files = _get_okhttp_file(app_folder)
     if len(files) == 0:
         return False
     
     for f in files:
-        _edit_okhttp_file(f)
+        _edit_okhttp_file(f, method)
 
     return True
 
@@ -32,16 +25,16 @@ def _get_okhttp_file(app_folder):
             detected_files.append(path)
     return detected_files
 
-def _edit_okhttp_file(okhttp_file):
+def _edit_okhttp_file(okhttp_file, ok_http_method):
     i = 0
     line_begin = 0
     line_end = 0
 
     file_lines = open(okhttp_file, 'r').readlines()
     for line in file_lines:
-        if begin_method in line:
+        if methods.okhttp_methods[ok_http_method] in line:
             line_begin = i
-        elif (end_method in line) and line_begin is not 0:
+        elif (methods.end_method in line) and line_begin is not 0:
             line_end = i
             break
         i = i +1
@@ -49,9 +42,9 @@ def _edit_okhttp_file(okhttp_file):
     if line_begin is 0:
         return False
     
-    file_lines[line_begin + 1] = line_1
-    file_lines[line_begin + 2] = line_2
-    file_lines[line_begin + 3] = line_3
+    file_lines[line_begin + 1] = methods.locals_declaration
+    file_lines[line_begin + 2] = methods.param_declaration
+    file_lines[line_begin + 3] = methods.return_declaration
     
     for j in range(line_begin + 4, line_end):
         file_lines[j] = ""

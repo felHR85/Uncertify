@@ -19,7 +19,6 @@ follow_redirects = 'followRedirects'
 follow_ssl_redirects = 'followSslRedirects'
 hostname_verifier = 'hostnameVerifier'
 interceptors = 'interceptors'
-network_interceptors = 'networkInterceptors'
 pingInterval_1 = 'ping_interval1'
 pingInterval_2 = 'ping_interval2'
 protocols = 'protocols'
@@ -57,7 +56,6 @@ okhttp_methods = {
     follow_redirects : '.method public followRedirects(Z)Lokhttp3/OkHttpClient$Builder',
     follow_ssl_redirects : '.method public followSslRedirects(Z)Lokhttp3/OkHttpClient$Builder',
     hostname_verifier : '.method public hostnameVerifier(Ljavax/net/ssl/HostnameVerifier;)Lokhttp3/OkHttpClient$Builder',
-    network_interceptors : '.method public networkInterceptors()Ljava/util/List',
     pingInterval_1 : '.method public pingInterval(JLjava/util/concurrent/TimeUnit;)Lokhttp3/OkHttpClient$Builder',
     pingInterval_2 : '.method public pingInterval(Ljava/time/Duration;)Lokhttp3/OkHttpClient$Builder',
     protocols : '.method public protocols(Ljava/util/List;)Lokhttp3/OkHttpClient$Builder',
@@ -78,6 +76,6 @@ okhttp_methods = {
 end_method = ".end method"
 
 # injects
-locals_declaration = "\t.locals $LOCALS\n"
-param_declaration = "\t.param p$PARAM, \"$NAME\"\n"
+locals_declaration = "\t.locals 2\n"
+param_declaration = "\t.param p1, \"parameter\"\n"
 return_declaration = "\treturn-object p0\n"

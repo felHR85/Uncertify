@@ -4,13 +4,17 @@ import click
 
 import manifest
 import okhttp
+import okhttp_methods as methods
 
 temp_folder = "./__temp_folder__"
 
-
 @click.command()
 @click.argument("apk")
-def main(apk: str):
+@click.option("--pinning", is_flag=True)
+@click.option("--interceptors", is_flag=True)
+@click.option("--dns", is_flag=True)
+@click.option("--follow", is_flag=True)
+def main(apk, pinning, interceptors, dns, follow):
     print('uncertify: decompiling ' + apk.split('.')[0])
     cmd = 'apktool d ' + apk + ' -o ' + temp_folder + " --force > /dev/null"
     os.system(cmd)
@@ -29,12 +33,38 @@ def main(apk: str):
     print('uncertify: network_security_config.xml added. Bypassing certificate pinning')
 
     #Modify Okhttp file
-    result = okhttp.modify_okhttp(temp_folder)
+    if pinning:
+        pinning_result = okhttp.modify_okhttp(temp_folder, methods.certificate_pinner)
+        if pinning_result:
+            print("uncertify: OkHttp certificate pinning bypassed")
+        else:
+            print("uncertify: OkHttp not found")
+
+    if interceptors:
+        interceptor_result = okhttp.modify_okhttp(temp_folder, methods.add_interceptor)
+        if interceptor_result:
+            print("uncertify: OkHttp certificate pinning bypassed")
+        else:
+            print("uncertify: OkHttp not found")
+
+    if dns:
+        dns_result = okhttp.modify_okhttp(temp_folder, methods.dns)
+        if dns_result:
+            print("uncertify: OkHttp certificate pinning bypassed")
+        else:
+            print("uncertify: OkHttp not found")
+
+    if follow:
+        follow_result = okhttp.modify_okhttp(temp_folder, methods.follow_redirects)
+        follow_ssl_result = okhttp.modify_okhttp(temp_folder, methods.follow_ssl_redirects)
+        if follow_result and follow_ssl_result:
+            print("uncertify: OkHttp certificate pinning bypassed")
+        else:
+            print("uncertify: OkHttp not found")
+
     
-    if result is True:
-        print("uncertify: OkHttp certificate pinning bypassed")
-    else:
-        print("uncertify: No OkHttp library found")
+    #Recompile Apk 
+
 
 if __name__ == '__main__':
     main()
