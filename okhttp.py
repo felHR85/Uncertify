@@ -28,14 +28,18 @@ def _get_okhttp_file(app_folder):
 def _edit_okhttp_file(okhttp_file, ok_http_method):
     file_lines = open(okhttp_file, 'r').readlines()
 
+    # Retrieving lines that match method definition and getting index
     filtered_lines = list(filter(lambda x : methods.okhttp_methods[ok_http_method] in x[1], zip(range(len(file_lines)), file_lines)))
 
     if len(filtered_lines) is 0:
         return False
 
     line_begin = filtered_lines[0][0]
+
+    # Getting where the method ends
     line_end = list(filter(lambda x: methods.end_method in x[1] and x[0] > line_begin, zip(range(len(file_lines)), file_lines)))[0][0]
 
+    # File substitution
     file_lines[line_begin + 1] = methods.locals_declaration
     file_lines[line_begin + 2] = methods.param_declaration
     file_lines[line_begin + 3] = methods.return_declaration
