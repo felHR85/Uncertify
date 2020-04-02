@@ -44,6 +44,7 @@ def _edit_okhttp_file(okhttp_file, ok_http_method):
     file_lines[line_begin + 2] = methods.param_declaration
     file_lines[line_begin + 3] = methods.return_declaration
     
+    #Delete next lines of bytecode because they are dead-code
     file_lines = list(map(lambda x: "" if (x[0] > line_begin + 3 and x[0] < line_end) else x[1], zip(range(len(file_lines)), file_lines)))
 
     with open(okhttp_file, 'w') as okhttp_file:
