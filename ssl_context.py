@@ -11,7 +11,8 @@ def modify_ssl_contexts(app_folder):
 def _search_ssl_contexts(app_folder):
     modified_files = []
     for root, dirs, files in os.walk(app_folder):
-        modified_files.append(_bypass_ssl_context_init(files))
+        if "okhttp3" in root == False:
+            modified_files.append(_bypass_ssl_context_init(files))
     return modified_files
 
 def _bypass_ssl_context_init(files):
