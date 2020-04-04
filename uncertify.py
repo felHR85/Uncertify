@@ -5,6 +5,7 @@ import click
 import manifest
 import okhttp
 import okhttp_methods as methods
+import ssl_context
 
 temp_folder = "./__temp_folder__"
 
@@ -15,7 +16,8 @@ temp_folder = "./__temp_folder__"
 @click.option("--dns", is_flag=True)
 @click.option("--follow", is_flag=True)
 def main(apk, pinning, interceptors, dns, follow):
-    print('uncertify: decompiling ' + apk.split('.')[0])
+    apk_name = "app-temp.apk" #TODO: detect apk name
+    print('uncertify: decompiling ')
     cmd = 'apktool d ' + apk + ' -o ' + temp_folder + " --force > /dev/null"
     os.system(cmd)
     
@@ -62,9 +64,21 @@ def main(apk, pinning, interceptors, dns, follow):
         else:
             print("uncertify: OkHttp not found")
 
+    #Modify SSLContext
+    if pinning:
+        ssl_context.modify_ssl_contexts(temp_folder)
     
-    #Recompile Apk 
+    #Rebuild Apk
+    cmd = "apktool b " + "__temp_folder__" + " -o " + apk_name + " > /dev/null"
+    os.system(cmd)
+    
+    cmd = "jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -storepass 123456 -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore uncertify.keystore " + apk_name + " felhr85 > /dev/null"
+    os.system(cmd)
 
+    cmd = "zipalign -f -v 4 " + apk_name + " " + "app-uncertify.apk"
+    os.system(cmd)
+
+    #TODO: Delete temp files
 
 if __name__ == '__main__':
     main()
