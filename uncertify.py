@@ -68,7 +68,10 @@ def main(apk, pinning, interceptors, dns, follow):
     if pinning:
         ssl_context.modify_ssl_contexts(temp_folder)
     
-    #Rebuild Apk
+    rebuild_apk(apk_name)
+    #TODO: Delete temp files
+
+def rebuild_apk(apk_name):
     cmd = "apktool b " + "__temp_folder__" + " -o " + apk_name + " > /dev/null"
     os.system(cmd)
     
@@ -77,8 +80,6 @@ def main(apk, pinning, interceptors, dns, follow):
 
     cmd = "zipalign -f -v 4 " + apk_name + " " + "app-uncertify.apk"
     os.system(cmd)
-
-    #TODO: Delete temp files
 
 if __name__ == '__main__':
     main()
