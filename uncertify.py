@@ -6,6 +6,7 @@ import manifest
 import okhttp
 import okhttp_methods as methods
 import ssl_context
+import logging
 
 temp_folder = "./__temp_folder__"
 
@@ -15,7 +16,8 @@ temp_folder = "./__temp_folder__"
 @click.option("--interceptors", is_flag=True)
 @click.option("--dns", is_flag=True)
 @click.option("--follow", is_flag=True)
-def main(apk, pinning, interceptors, dns, follow):
+@click.option("--logs", is_flag=True)
+def main(apk, pinning, interceptors, dns, follow, logs):
     apk_name = "app-temp.apk" #TODO: detect apk name
     print('uncertify: decompiling ')
     cmd = 'apktool d ' + apk + ' -o ' + temp_folder + " --force > /dev/null"
@@ -67,6 +69,10 @@ def main(apk, pinning, interceptors, dns, follow):
     #Modify SSLContext
     if pinning:
         ssl_context.modify_ssl_contexts(temp_folder)
+
+    #Add Http logs if app uses OkHttp
+    if logs:
+        logging.add_http_logging(temp_folder)
     
     rebuild_apk(apk_name)
     #TODO: Delete temp files
