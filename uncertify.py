@@ -64,17 +64,25 @@ def main(apk, pinning, interceptors, dns, follow, logs):
         follow_result = okhttp.modify_okhttp(temp_folder, methods.follow_redirects)
         follow_ssl_result = okhttp.modify_okhttp(temp_folder, methods.follow_ssl_redirects)
         if follow_result and follow_ssl_result:
-            print("uncertify: OkHttp certificate pinning bypassed")
+            print("uncertify: OkHttp deleted follow redirects")
         else:
             print("uncertify: OkHttp not found")
 
     #Modify SSLContext
     if pinning:
-        ssl_context.modify_ssl_contexts(temp_folder)
+        modified_files = ssl_context.modify_ssl_contexts(temp_folder)
+        if modified_files:
+            print("uncertify: SSLContext init method modified")
+        else:
+            print("uncertify: No SSLContext init method modified")
 
     #Add Http logs if app uses OkHttp
     if logs:
-        logging.add_http_logging(temp_folder)
+        logged = logging.add_http_logging(temp_folder)
+        if logged:
+            print("uncertify: OkHttp logs added")
+        else:
+            print("uncertify: OkHttp not found")
     
     print("uncertify: Rebuilding apk")
     rebuild_apk(apk_name)

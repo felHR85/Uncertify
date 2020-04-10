@@ -27,6 +27,7 @@ def add_http_logging(app_folder):
     for f in okhttp_files:
         _add_logging_method(f)
         _call_logging_method(f)
+    return True
     
 
 def _get_okhttp_folder(app_folder):
