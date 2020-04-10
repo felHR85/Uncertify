@@ -9,17 +9,19 @@ import ssl_context
 import logging
 
 temp_folder = "./__temp_folder__"
+apk_name = "app-temp.apk"
+android_manifest_temp = "AndroidManifest.xml"
 
 @click.command()
 @click.argument("apk")
-@click.option("--pinning", is_flag=True)
-@click.option("--interceptors", is_flag=True)
-@click.option("--dns", is_flag=True)
-@click.option("--follow", is_flag=True)
-@click.option("--logs", is_flag=True)
+@click.option("--pinning", is_flag=True, help="bypass certificate pinning")
+@click.option("--interceptors", is_flag=True, help="bypass Okhttp interceptors")
+@click.option("--dns", is_flag=True, help="delete dns configuration in Okhttp")
+@click.option("--follow", is_flag=True, help="delete follow redirects in Okhttp")
+@click.option("--logs", is_flag=True, help="Activate logs in Okhttp")
 def main(apk, pinning, interceptors, dns, follow, logs):
-    apk_name = "app-temp.apk" #TODO: detect apk name
     print('uncertify: decompiling ')
+    delete_temp()
     cmd = 'apktool d ' + apk + ' -o ' + temp_folder + " --force > /dev/null"
     os.system(cmd)
     
@@ -34,7 +36,7 @@ def main(apk, pinning, interceptors, dns, follow, logs):
 
     manifest.copy_security_file(temp_folder)
     
-    print('uncertify: network_security_config.xml added. Bypassing certificate pinning')
+    print('uncertify: network_security_config.xml added')
 
     #Modify Okhttp file
     if pinning:
@@ -47,14 +49,14 @@ def main(apk, pinning, interceptors, dns, follow, logs):
     if interceptors:
         interceptor_result = okhttp.modify_okhttp(temp_folder, methods.add_interceptor)
         if interceptor_result:
-            print("uncertify: OkHttp certificate pinning bypassed")
+            print("uncertify: OkHttp deleted interceptors")
         else:
             print("uncertify: OkHttp not found")
 
     if dns:
         dns_result = okhttp.modify_okhttp(temp_folder, methods.dns)
         if dns_result:
-            print("uncertify: OkHttp certificate pinning bypassed")
+            print("uncertify: OkHttp deleted dns")
         else:
             print("uncertify: OkHttp not found")
 
@@ -74,8 +76,11 @@ def main(apk, pinning, interceptors, dns, follow, logs):
     if logs:
         logging.add_http_logging(temp_folder)
     
+    print("uncertify: Rebuilding apk")
     rebuild_apk(apk_name)
-    #TODO: Delete temp files
+    delete_temp()
+
+    print("uncertify: Apk rebuild with name app-uncertify.apk")
 
 def rebuild_apk(apk_name):
     cmd = "apktool b " + "__temp_folder__" + " -o " + apk_name + " > /dev/null"
@@ -86,6 +91,13 @@ def rebuild_apk(apk_name):
 
     cmd = "zipalign -f -v 4 " + apk_name + " " + "app-uncertify.apk"
     os.system(cmd)
+
+def delete_temp():
+    shutil.rmtree(temp_folder, ignore_errors=True)
+    if os.path.exists(apk_name):
+        os.remove(apk_name)
+    if os.path.exists(android_manifest_temp):
+        os.remove(android_manifest_temp)
 
 if __name__ == '__main__':
     main()
