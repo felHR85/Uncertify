@@ -14,11 +14,11 @@ android_manifest_temp = "AndroidManifest.xml"
 
 @click.command()
 @click.argument("apk")
-@click.option("--pinning", is_flag=True, help="bypass certificate pinning")
-@click.option("--interceptors", is_flag=True, help="bypass Okhttp interceptors")
-@click.option("--dns", is_flag=True, help="delete dns configuration in Okhttp")
-@click.option("--follow", is_flag=True, help="delete follow redirects in Okhttp")
-@click.option("--logs", is_flag=True, help="Activate logs in Okhttp")
+@click.option("--pinning", is_flag=True, help="Bypass certificate pinning")
+@click.option("--interceptors", is_flag=True, help="Bypass OkHttp interceptors")
+@click.option("--dns", is_flag=True, help="Bypass OkHttp DNS configuration")
+@click.option("--follow", is_flag=True, help="Bypass OkHttp follow redirects and follow ssl redirects")
+@click.option("--logs", is_flag=True, help="Enables OkHttp logs")
 def main(apk, pinning, interceptors, dns, follow, logs):
     print('uncertify: decompiling ')
     delete_temp()
